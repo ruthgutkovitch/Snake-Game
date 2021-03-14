@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 
+
 class Apple:
     food_x = 0
     food_y = 0
@@ -14,8 +15,9 @@ class Apple:
         self.food_x = round(random.randrange(0, screen_width))
         self.food_y = round(random.randrange(0, screen_height))
 
-    def draw(self, screen,image):
-        screen.blit(image,(self.food_x, self.food_y))
+    def draw(self, screen, image):
+        screen.blit(image, (self.food_x, self.food_y))
+
 
 class Player:
     x = []
@@ -23,7 +25,7 @@ class Player:
     move = 10
     len = 1
     score = 0
-    str = None
+    str = ''
 
     def __init__(self, screen_width, screen_height):
         self.x.append(screen_width/2)
@@ -64,6 +66,7 @@ class Player:
         for i in range(self.len):
             screen.blit(image, (self.x[i], self.y[i]))
 
+
 class Screen:
     orange_color = (245, 155, 22)
     yellow_color = (248, 255, 3)
@@ -82,8 +85,8 @@ class Screen:
         self.apple = Apple(self.screen_width, self.screen_height)
 
     def endGame(self):
-        len = self.player.len
-        for i in range(len):
+        length = self.player.len
+        for i in range(length):
             if self.player.x[i] >= self.screen_width or self.player.x[i] <= 0:
                 return True
             if self.player.y[i] >= self.screen_height or self.player.y[i] <= 0:
@@ -102,10 +105,9 @@ class Screen:
         pygame.display.update()
         pygame.display.set_caption("Snake Game")
 
-
-    def printMessage(self, str, num):
+    def printMessage(self, word, num):
         font = pygame.font.SysFont(None, num)
-        message = font.render(str, True, self.orange_color)
+        message = font.render(word, True, self.orange_color)
         self.screen.blit(message, [self.screen_width / 3, self.screen_height / 3])
         pygame.display.update()
         time.sleep(2)
@@ -113,7 +115,7 @@ class Screen:
     def Score(self):
         font = pygame.font.SysFont(None, 40)
         value = font.render("Your score is " + str(self.player.score), True, self.yellow_color)
-        self.screen.blit(value, [0,0])
+        self.screen.blit(value, [0, 0])
 
     def displayScreen(self):
         self.screen.fill(self.white_color)
@@ -124,7 +126,7 @@ class Screen:
 
     def play(self):
         self.createScreen()
-        while(self._running):
+        while self._running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._running = False
@@ -141,7 +143,7 @@ class Screen:
                         self.player.moveDown()
                 self.player.updatePlayerPosition()
 
-            if self.endGame() == True:
+            if self.endGame():
                 self._running = False
                 self.printMessage("You lost ", 100)
 
@@ -154,6 +156,7 @@ class Screen:
             self.clock.tick(self.player.move)
 
         pygame.quit()
+
 
 if __name__ == '__main__':
     Screen = Screen()
