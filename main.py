@@ -4,16 +4,14 @@ import random
 
 
 class Apple:
-    food_x = 0
-    food_y = 0
 
     def __init__(self, screen_width, screen_height):
-        self.food_x = round(random.randrange(0, screen_width))
-        self.food_y = round(random.randrange(0, screen_height))
+        self.food_x = round(random.randrange(0, screen_width-10)/10)*10
+        self.food_y = round(random.randrange(0, screen_height-10)/10)*10
 
     def change(self, screen_width, screen_height):
-        self.food_x = round(random.randrange(0, screen_width))
-        self.food_y = round(random.randrange(0, screen_height))
+        self.food_x = round(random.randrange(0, screen_width-10)/10)*10
+        self.food_y = round(random.randrange(0, screen_height-10)/10)*10
 
     def draw(self, screen, image):
         screen.blit(image, (self.food_x, self.food_y))
@@ -28,8 +26,8 @@ class Player:
     str = ''
 
     def __init__(self, screen_width, screen_height):
-        self.x.append(screen_width/2)
-        self.y.append(screen_height/2)
+        self.x.append(int(screen_width/2))
+        self.y.append(int(screen_height/2))
 
     def updateSnakeHead(self):
         if self.str == "Right":
@@ -42,9 +40,10 @@ class Player:
             self.y[0] += self.move
 
     def updatePrev(self):
-        for i in range(len(self.x)-1, 0, -1):
-            self.x[i] = self.x[i-1]
-            self.y[i] = self.y[i-1]
+        for i in range(self.len - 1, 0, -1):
+            self.x[i] = self.x[i - 1]
+            self.y[i] = self.y[i - 1]
+
 
     def updatePlayerPosition(self):
         self.updatePrev()
@@ -63,8 +62,12 @@ class Player:
         self.str = "Down"
 
     def draw(self, screen, image):
-        for i in range(self.len):
-            screen.blit(image, (self.x[i], self.y[i]))
+        length = self.len
+        if length == 1:
+            screen.blit(image, (self.x[0], self.y[0]))
+        else:
+            for i in range(length-1):
+                screen.blit(image, (self.x[i], self.y[i]))
 
 
 class Screen:
@@ -86,11 +89,17 @@ class Screen:
 
     def endGame(self):
         length = self.player.len
-        for i in range(length):
-            if self.player.x[i] >= self.screen_width or self.player.x[i] <= 0:
+        if length == 1:
+            if self.player.x[0] >= self.screen_width or self.player.x[0] <= 0:
                 return True
-            if self.player.y[i] >= self.screen_height or self.player.y[i] <= 0:
+            if self.player.y[0] >= self.screen_height or self.player.y[0] <= 0:
                 return True
+        else:
+            for i in range(length - 1):
+                if self.player.x[i] >= self.screen_width or self.player.x[i] <= 0:
+                    return True
+                if self.player.y[i] >= self.screen_height or self.player.y[i] <= 0:
+                    return True
 
         return False
 
@@ -149,12 +158,18 @@ class Screen:
 
             self.displayScreen()
             if self.apple.food_x == self.player.x[0] and self.apple.food_y == self.player.y[0]:
-                self.score += 1
+                self.player.score += 1
+                if self.player.len == 1:
+                    self.player.x.append(self.apple.food_x-20)
+                    self.player.y.append(self.apple.food_y-20)
+                else:
+                    x = self.player.x[self.player.len - 1]
+                    y = self.player.y[self.player.len - 1]
+                    self.player.x.append(x-20), self.player.y.append(y-20)
                 self.player.len += 1
                 self.apple.change(self.screen_width, self.screen_height)
 
             self.clock.tick(self.player.move)
-
         pygame.quit()
 
 
